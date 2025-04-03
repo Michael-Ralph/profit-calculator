@@ -15,6 +15,9 @@ func main() {
 	// Calculations
 	ebt, _, netProfit, pmr := calcs(revenue, expenses, taxRate)
 
+	// Write data to file
+	writeData(ebt, netProfit, pmr)
+
 	// Outputs
 	fmt.Printf("Earnings Before Tax: R%.2f\n", ebt)
 	fmt.Printf("Net profit: R%.2f\n", netProfit)
@@ -72,4 +75,9 @@ func calcs(revenue, expenses, taxRate float64) (float64, float64, float64, float
 	pmr := calcPMR(ebt, revenue)
 
 	return ebt, taxAmount, netProfit, pmr
+}
+
+func writeData(ebt, netProfit, pmr float64) {
+	dataStr := fmt.Sprintf("EBT : R%.2f, Net profit : R%.2f, PMR : %.2f", ebt, netProfit, pmr)
+	os.WriteFile("results.txt", []byte(dataStr), 0644)
 }
