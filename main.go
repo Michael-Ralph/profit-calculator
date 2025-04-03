@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 )
 
 func main() {
@@ -12,14 +13,7 @@ func main() {
 	revenue, expenses, taxRate = getVariables()
 
 	// Calculations
-	// EBT (Earnings Before Tax) = Revenue - Operating Expenses - Interest Expenses
-	ebt := calcEBT(revenue, expenses)
-	// Tax Amount = EBT × Tax Rate
-	taxAmount := taxCalc(ebt, taxRate)
-	// Net Profit = Revenue - Operating Expenses - Interest Expenses - (EBT × Tax Rate)
-	netProfit := netProfit(ebt, taxAmount)
-	// Pretax Margin Ratio = EBT / Revenue * 100
-	pmr := calcPMR(ebt, revenue)
+	ebt, _, netProfit, pmr := calcs(revenue, expenses, taxRate)
 
 	// Outputs
 	fmt.Printf("Earnings Before Tax: R%.2f\n", ebt)
@@ -31,10 +25,22 @@ func getVariables() (float64, float64, float64) {
 	var revenue, expenses, taxRate float64
 	fmt.Print("What is your total revenue: R")
 	fmt.Scan(&revenue)
+	if revenue <= 0 {
+		fmt.Println("Revenue can not be less than R0.")
+		os.Exit(1)
+	}
 	fmt.Print("What are your total expenses: R")
 	fmt.Scan(&expenses)
+	if expenses <= 0 {
+		fmt.Println("Expenses can not be less than R0.")
+		os.Exit(1)
+	}
 	fmt.Print("What is your countries tax rate(%): ")
 	fmt.Scan(&taxRate)
+	if taxRate <= 0 {
+		fmt.Println("tax rate can not be less than 0%.")
+		os.Exit(1)
+	}
 
 	return revenue, expenses, taxRate
 }
@@ -57,4 +63,13 @@ func netProfit(ebt, taxAmount float64) float64 {
 func calcPMR(ebt, revenue float64) float64 {
 	pmr := (ebt / revenue) * 100
 	return pmr
+}
+
+func calcs(revenue, expenses, taxRate float64) (float64, float64, float64, float64) {
+	ebt := calcEBT(revenue, expenses)
+	taxAmount := taxCalc(ebt, taxRate)
+	netProfit := netProfit(ebt, taxAmount)
+	pmr := calcPMR(ebt, revenue)
+
+	return ebt, taxAmount, netProfit, pmr
 }
